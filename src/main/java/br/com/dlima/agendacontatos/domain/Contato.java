@@ -2,6 +2,7 @@ package br.com.dlima.agendacontatos.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,6 +31,7 @@ public class Contato implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	
 	private String nome;
 		
 	private String telefone;
@@ -44,6 +46,7 @@ public class Contato implements Serializable {
 
     private String CodigoPostal;
     
+    @Column(length = 4000)
     private String nota;
 
 }
