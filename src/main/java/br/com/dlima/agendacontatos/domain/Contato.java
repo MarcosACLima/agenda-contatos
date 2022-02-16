@@ -44,7 +44,7 @@ public class Contato implements Serializable {
 
     private String endereco3;
 
-    private String CodigoPostal;
+    private String codigo_postal;
     
     @Column(length = 4000)
     private String nota;
