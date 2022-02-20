@@ -1,5 +1,7 @@
 package br.com.dlima.agendacontatos.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,56 +15,119 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.dlima.agendacontatos.domain.Contato;
+import br.com.dlima.agendacontatos.exception.ResourceNotFoundException;
 import br.com.dlima.agendacontatos.service.ContatoService;
 
 @Controller
 public class ContatoController {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	private final int ROw_PER_PAGE = 5;
-	
+
+	private final int ROW_PER_PAGE = 5;
+
 	@Autowired
 	private ContatoService contatoService;
-	
+
 	@Value("${msg.title}")
 	private String title;
-	
-		
-	@GetMapping(value = {"/", "/index"})
+
+	@GetMapping(value = { "/", "/index" })
 	public String index(Model model) {
-	    model.addAttribute("title", title);
-	    return "index";
+		model.addAttribute("title", title);
+		return "index";
 	}
-	
+
 	@GetMapping(value = "/contacts")
-    public String getContacts(Model model,
-            @RequestParam(value = "page", defaultValue = "1") int pageNumber) { return null; }
- 
-    @GetMapping(value = "/contacts/{contactId}")
-    public String getContactById(Model model, @PathVariable long contactId) { return null; }
- 
-    @GetMapping(value = {"/contacts/add"})
-    public String showAddContact(Model model) { return null; }
- 
-    @PostMapping(value = "/contacts/add")
-    public String addContact(Model model,
-            @ModelAttribute("contact") Contato contact) { return null; }
- 
-    @GetMapping(value = {"/contacts/{contactId}/edit"})
-    public String showEditContact(Model model, @PathVariable long contactId) { return null; }
-    
-    @PostMapping(value = {"/contacts/{contactId}/edit"})
-    public String updateContact(Model model,
-            @PathVariable long contactId,
-            @ModelAttribute("contact") Contato contact) { return null; }
- 
-    @GetMapping(value = {"/contacts/{contactId}/delete"})
-    public String showDeleteContactById(
-            Model model, @PathVariable long contactId) { return null; }
-    
-    @PostMapping(value = {"/contacts/{contactId}/delete"})
-    public String deleteContactById(
-            Model model, @PathVariable long contactId) { return null; }
-	
+	public String getContacts(Model model, @RequestParam(value = "page", defaultValue = "1") int pageNumber) {
+		
+		List<Contato> contacts = contatoService.findAll(pageNumber, ROW_PER_PAGE);
+		
+		
+		long count = contatoService.count();
+	    boolean hasPrev = pageNumber > 1;
+	    boolean hasNext = (pageNumber * ROW_PER_PAGE) < count;
+	    model.addAttribute("contacts", contacts);
+	    model.addAttribute("hasPrev", hasPrev);
+	    model.addAttribute("prev", pageNumber - 1);
+	    model.addAttribute("hasNext", hasNext);
+	    model.addAttribute("next", pageNumber + 1);
+	    return "contact-list";
+	}
+
+	@GetMapping(value = "/contacts/{contactId}")
+	public String getContactById(Model model, @PathVariable long contactId) {
+		return null;
+	}
+
+	@GetMapping(value = { "/contacts/add" })
+	public String showAddContact(Model model) {
+		Contato contact = new Contato();
+	    model.addAttribute("add", true);
+	    model.addAttribute("contact", contact);
+	 
+	    return "contact-edit";
+	}
+
+	@PostMapping(value = "/contacts/add")
+	public String addContact(Model model, @ModelAttribute("contact") Contato contact) {
+		try {
+	        Contato newContact = contatoService.save(contact);
+	        return "redirect:/contacts/" + String.valueOf(newContact.getId());
+	    } catch (Exception ex) {
+	        // log exception first, 
+	        // then show error
+	        String errorMessage = ex.getMessage();
+	        logger.error(errorMessage);
+	        model.addAttribute("errorMessage", errorMessage);
+	 
+	        //model.addAttribute("contact", contact);
+	        model.addAttribute("add", true);
+	        return "contact-edit";
+	    }        
+	}
+
+	@GetMapping(value = { "/contacts/{contactId}/edit" })
+	public String showEditContact(Model model, @PathVariable long contactId) {
+		Contato contact = null;
+	    try {
+	        contact = contatoService.findById(contactId);
+	    } catch (ResourceNotFoundException ex) {
+	        model.addAttribute("errorMessage", "Contact not found");
+	    }
+	    model.addAttribute("add", false);
+	    model.addAttribute("contact", contact);
+	    return "contact-edit";
+
+	}
+
+	@PostMapping(value = { "/contacts/{contactId}/edit" })
+	public String updateContact(Model model, @PathVariable long contactId, @ModelAttribute("contact") Contato contact) {
+		
+	    try {
+	        contact.setId(contactId);
+	        contatoService.update(contact);
+	        return "redirect:/contacts/" + String.valueOf(contact.getId());
+	    } catch (Exception ex) {
+	        // log exception first, 
+	        // then show error
+	        String errorMessage = ex.getMessage();
+	        logger.error(errorMessage);
+	        model.addAttribute("errorMessage", errorMessage);
+	 
+	         model.addAttribute("add", false);
+	        return "contact-edit";
+	    }
+		
+	}
+
+	@GetMapping(value = { "/contacts/{contactId}/delete" })
+	public String showDeleteContactById(Model model, @PathVariable long contactId) {
+		return null;
+	}
+
+	@PostMapping(value = { "/contacts/{contactId}/delete" })
+	public String deleteContactById(Model model, @PathVariable long contactId) {
+		return null;
+	}
+
 }
