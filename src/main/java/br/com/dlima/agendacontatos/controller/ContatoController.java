@@ -56,7 +56,14 @@ public class ContatoController {
 
 	@GetMapping(value = "/contacts/{contactId}")
 	public String getContactById(Model model, @PathVariable long contactId) {
-		return null;
+		Contato contact = null;
+	    try {
+	        contact = contatoService.findById(contactId);
+	    } catch (ResourceNotFoundException ex) {
+	        model.addAttribute("errorMessage", "Contact not found");
+	    }
+	    model.addAttribute("contact", contact);
+	    return "contact";
 	}
 
 	@GetMapping(value = { "/contacts/add" })
@@ -122,12 +129,29 @@ public class ContatoController {
 
 	@GetMapping(value = { "/contacts/{contactId}/delete" })
 	public String showDeleteContactById(Model model, @PathVariable long contactId) {
-		return null;
+		Contato contact = null;
+	    try {
+	        contact = contatoService.findById(contactId);
+	    } catch (ResourceNotFoundException ex) {
+	        model.addAttribute("errorMessage", "Contact not found");
+	    }
+	    model.addAttribute("allowDelete", true);
+	    model.addAttribute("contact", contact);
+	    return "contact";
 	}
 
 	@PostMapping(value = { "/contacts/{contactId}/delete" })
 	public String deleteContactById(Model model, @PathVariable long contactId) {
-		return null;
+		try {
+			contatoService.deleteById(contactId);
+	        return "redirect:/contacts";
+	    } catch (ResourceNotFoundException ex) {
+	        String errorMessage = ex.getMessage();
+	        logger.error(errorMessage);
+	        model.addAttribute("errorMessage", errorMessage);
+	        return "contact";
+	    }
+
 	}
 
 }

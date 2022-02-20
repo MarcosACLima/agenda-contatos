@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>View Contact</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    </head>
+    <body>
+        <h1>View Contact</h1>
+        <a th:href="@{/contacts}">Back to Contact List</a>
+        <br/><br/>
+        <div th:if="${contact}">
+            <table border="0">
+                <tr>
+                    <td>ID</td>
+                    <td>:</td>
+                    <td th:utext="${contact.id}">...</td>          
+                </tr>
+                <tr>
+                    <td>Name</td>
+                    <td>:</td>
+                    <td th:utext="${contact.nome}">...</td>             
+                </tr>
+                <tr>
+                    <td>Phone</td>
+                    <td>:</td>
+                    <td th:utext="${contact.telefone}">...</td>              
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>:</td>
+                    <td th:utext="${contact.email}">...</td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td>:</td>
+                    <td th:utext="${contact.endereco1}">...</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td th:utext="${contact.endereco2}">...</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td th:utext="${contact.endereco3}">...</td>
+                </tr>
+                <tr>
+                    <td>Postal Code</td>
+                    <td>:</td>
+                    <td th:utext="${contact.codigo_postal}">...</td>
+                </tr>
+                <tr>
+                    <td>Notes</td>
+                    <td>:</td>
+                    <td th:utext="${contact.nota}">...</td>
+                </tr>
+            </table>
+            <br/><br/>
+            <div th:if="not ${allowDelete}">
+                <a th:href="@{/contacts/{contactId}/edit(contactId=${contact.id})}">Edit</a> |
+                <a th:href="@{/contacts/{contactId}/delete(contactId=${contact.id})}">Delete</a>
+            </div>
+            <form th:if="${allowDelete}" th:action="@{/contacts/{contactId}/delete(contactId=${contact.id})}" method="POST">
+                Delete this contact? <input type="submit" th:value="Yes" />
+            </form>
+        </div>
+        <div th:if="${errorMessage}" th:utext="${errorMessage}" class="error" />        
+    </body>
+</html>
