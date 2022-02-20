@@ -43,7 +43,7 @@ public class ContatoService {
 
 	public Contato save(Contato contato) throws BadResourceException, ResourceAlreadyExistsException {
 		if (!StringUtils.isEmpty(contato.getNome())) {
-			if (contato.getId() != existsById(contato.getId())) {
+			if (contato.getId() != null && existsById(contato.getId())) {
 				throw new ResourceAlreadyExistsException("Contato com id: " + contato.getId() + " ja existe");
 			}
 			return contatoRepository.save(contato);
@@ -55,7 +55,7 @@ public class ContatoService {
 	}
 
 	public void update(Contato contato) throws BadResourceException, ResourceNotFoundException {
-		if (!StringUtils.isEmpty(contato.getName())) {
+		if (!StringUtils.isEmpty(contato.getNome())) {
 			if (!existsById(contato.getId())) {
 				throw new ResourceNotFoundException("Não é possível encontrar o contato com o ID: " + contato.getId());
 			}

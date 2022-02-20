@@ -28,37 +28,41 @@ public class ContatoController {
 	@Value("${msg.title}")
 	private String title;
 	
+		
 	@GetMapping(value = {"/", "/index"})
-	private String index(Model model) { ... } 
+	public String index(Model model) {
+	    model.addAttribute("title", title);
+	    return "index";
+	}
 	
 	@GetMapping(value = "/contacts")
     public String getContacts(Model model,
-            @RequestParam(value = "page", defaultValue = "1") int pageNumber) { ... }
+            @RequestParam(value = "page", defaultValue = "1") int pageNumber) { return null; }
  
     @GetMapping(value = "/contacts/{contactId}")
-    public String getContactById(Model model, @PathVariable long contactId) { ... }
+    public String getContactById(Model model, @PathVariable long contactId) { return null; }
  
     @GetMapping(value = {"/contacts/add"})
-    public String showAddContact(Model model) { ... }
+    public String showAddContact(Model model) { return null; }
  
     @PostMapping(value = "/contacts/add")
     public String addContact(Model model,
-            @ModelAttribute("contact") Contato contact) { ... }
+            @ModelAttribute("contact") Contato contact) { return null; }
  
     @GetMapping(value = {"/contacts/{contactId}/edit"})
-    public String showEditContact(Model model, @PathVariable long contactId) { ... }
+    public String showEditContact(Model model, @PathVariable long contactId) { return null; }
     
     @PostMapping(value = {"/contacts/{contactId}/edit"})
     public String updateContact(Model model,
             @PathVariable long contactId,
-            @ModelAttribute("contact") Contato contact) { ... }
+            @ModelAttribute("contact") Contato contact) { return null; }
  
     @GetMapping(value = {"/contacts/{contactId}/delete"})
     public String showDeleteContactById(
-            Model model, @PathVariable long contactId) { ... }
+            Model model, @PathVariable long contactId) { return null; }
     
     @PostMapping(value = {"/contacts/{contactId}/delete"})
     public String deleteContactById(
-            Model model, @PathVariable long contactId) { ... }
+            Model model, @PathVariable long contactId) { return null; }
 	
 }
